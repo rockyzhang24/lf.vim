@@ -97,7 +97,7 @@ else
   let s:default_edit_cmd='edit '
 endif
 
-command! LfCurrentFile call OpenLfIn("%", s:default_edit_cmd)
+command! LfCurrentFile call OpenLfIn("%:p:h", s:default_edit_cmd)
 command! LfCurrentDirectory call OpenLfIn("%:p:h", s:default_edit_cmd)
 command! LfWorkingDirectory call OpenLfIn(".", s:default_edit_cmd)
 command! Lf LfCurrentFile
