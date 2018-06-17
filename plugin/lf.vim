@@ -67,6 +67,7 @@ if has('nvim')
     else
       call termopen(s:lf_command . ' -selection-path=' . s:choice_file_path . ' --selectfile="' . currentPath . '"', lfCallback)
     endif
+    set filetype=lf
     startinsert
   endfunction
 else
@@ -77,6 +78,7 @@ else
     else
       silent exec '!' . s:lf_command . ' -selection-path=' . s:choice_file_path . ' --selectfile="' . currentPath . '"'
     endif
+    set filetype=lf
     if filereadable(s:choice_file_path)
       for f in readfile(s:choice_file_path)
         exec a:edit_cmd . f
