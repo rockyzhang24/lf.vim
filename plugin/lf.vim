@@ -44,53 +44,58 @@ if !exists('s:choice_file_path')
   let s:choice_file_path = '/tmp/chosenfile'
 endif
 
-if has('nvim')
-  function! OpenLfIn(path, edit_cmd)
-    let currentPath = expand(a:path)
-    let lfCallback = { 'name': 'lf', 'edit_cmd': a:edit_cmd }
-    function! lfCallback.on_exit(job_id, code, event)
-      if a:code == 0
-        silent! Bclose!
-      endif
-      try
-        if filereadable(s:choice_file_path)
-          for f in readfile(s:choice_file_path)
-            exec self.edit_cmd . f
-          endfor
-          call delete(s:choice_file_path)
+function! OpenLfIn(path, edit_cmd)
+  let oldguioptions = &guioptions
+  let oldlaststatus = &laststatus
+  try
+    if has('nvim')
+      let currentPath = expand(a:path)
+      let lfCallback = { 'name': 'lf', 'edit_cmd': a:edit_cmd }
+      function! lfCallback.on_exit(job_id, code, event)
+        if a:code == 0
+          silent! Bclose!
         endif
-      endtry
-    endfunction
-    enew
-    if isdirectory(currentPath)
-      call termopen(s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"', lfCallback)
+        try
+          if filereadable(s:choice_file_path)
+            for f in readfile(s:choice_file_path)
+              exec self.edit_cmd . f
+            endfor
+            call delete(s:choice_file_path)
+          endif
+        endtry
+      endfunction
+      enew
+      if isdirectory(currentPath)
+        call termopen(s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"', lfCallback)
+      else
+        call termopen(s:lf_command . ' -selection-path=' . s:choice_file_path . ' --selectfile="' . currentPath . '"', lfCallback)
+      endif
+      startinsert
     else
-      call termopen(s:lf_command . ' -selection-path=' . s:choice_file_path . ' --selectfile="' . currentPath . '"', lfCallback)
+      set guioptions+=! " Make it work with MacVim
+      let currentPath = expand(a:path)
+      if isdirectory(currentPath)
+        silent exec '!' . s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"'
+      else
+        silent exec '!' . s:lf_command . ' -selection-path=' . s:choice_file_path . ' --selectfile="' . currentPath . '"'
+      endif
+      set filetype=lf
+      if filereadable(s:choice_file_path)
+        for f in readfile(s:choice_file_path)
+          exec a:edit_cmd . f
+        endfor
+        call delete(s:choice_file_path)
+      endif
+      redraw!
+      " reset the filetype to fix the issue that happens
+      " when opening lf on VimEnter (with `vim .`)
+      filetype detect
     endif
-    set filetype=lf
-    startinsert
-  endfunction
-else
-  function! OpenLfIn(path, edit_cmd)
-    let currentPath = expand(a:path)
-    if isdirectory(currentPath)
-      silent exec '!' . s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"'
-    else
-      silent exec '!' . s:lf_command . ' -selection-path=' . s:choice_file_path . ' --selectfile="' . currentPath . '"'
-    endif
-    set filetype=lf
-    if filereadable(s:choice_file_path)
-      for f in readfile(s:choice_file_path)
-        exec a:edit_cmd . f
-      endfor
-      call delete(s:choice_file_path)
-    endif
-    redraw!
-    " reset the filetype to fix the issue that happens
-    " when opening lf on VimEnter (with `vim .`)
-    filetype detect
-  endfun
-endif
+  finally
+    let &guioptions=oldguioptions
+    let &laststatus=oldlaststatus
+  endtry
+endfun
 
 " For backwards-compatibility (deprecated)
 if exists('g:lf_open_new_tab') && g:lf_open_new_tab
