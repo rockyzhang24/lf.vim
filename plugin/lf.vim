@@ -48,6 +48,7 @@ function! OpenLfIn(path, edit_cmd)
   let oldguioptions = &guioptions
   try
     if has('nvim')
+      set laststatus=0
       let currentPath = expand(a:path)
       let lfCallback = { 'name': 'lf', 'edit_cmd': a:edit_cmd }
       function! lfCallback.on_exit(job_id, code, event)
@@ -89,10 +90,8 @@ function! OpenLfIn(path, edit_cmd)
       " when opening lf on VimEnter (with `vim .`)
       filetype detect
     endif
-    set filetype=lf
-  finally
-    let &guioptions=oldguioptions
   endtry
+  let &guioptions=oldguioptions
 endfun
 
 " For backwards-compatibility (deprecated)
