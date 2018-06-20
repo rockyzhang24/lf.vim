@@ -46,7 +46,6 @@ endif
 
 function! OpenLfIn(path, edit_cmd)
   let oldguioptions = &guioptions
-  let oldlaststatus = &laststatus
   try
     if has('nvim')
       let currentPath = expand(a:path)
@@ -79,7 +78,6 @@ function! OpenLfIn(path, edit_cmd)
       else
         silent exec '!' . s:lf_command . ' -selection-path=' . s:choice_file_path . ' --selectfile="' . currentPath . '"'
       endif
-      set filetype=lf
       if filereadable(s:choice_file_path)
         for f in readfile(s:choice_file_path)
           exec a:edit_cmd . f
@@ -91,9 +89,9 @@ function! OpenLfIn(path, edit_cmd)
       " when opening lf on VimEnter (with `vim .`)
       filetype detect
     endif
+    set filetype=lf
   finally
     let &guioptions=oldguioptions
-    let &laststatus=oldlaststatus
   endtry
 endfun
 
