@@ -68,7 +68,7 @@ function! OpenLfIn(path, edit_cmd)
       if isdirectory(currentPath)
         call termopen(s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"', lfCallback)
       else
-        call termopen(s:lf_command . ' -selection-path=' . s:choice_file_path . ' --selectfile="' . currentPath . '"', lfCallback)
+        call termopen(s:lf_command . " " . currentPath, lfCallback)
       endif
       startinsert
     else
@@ -77,7 +77,7 @@ function! OpenLfIn(path, edit_cmd)
       if isdirectory(currentPath)
         silent exec '!' . s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"'
       else
-        silent exec '!' . s:lf_command . ' -selection-path=' . s:choice_file_path . ' --selectfile="' . currentPath . '"'
+        silent exec '!' . s:lf_command . " " . currentPath
       endif
       if filereadable(s:choice_file_path)
         for f in readfile(s:choice_file_path)
@@ -101,7 +101,7 @@ else
   let s:default_edit_cmd='edit '
 endif
 
-command! LfCurrentFile call OpenLfIn("%:p:h", s:default_edit_cmd)
+command! LfCurrentFile call OpenLfIn("%", s:default_edit_cmd)
 command! LfCurrentDirectory call OpenLfIn("%:p:h", s:default_edit_cmd)
 command! LfWorkingDirectory call OpenLfIn(".", s:default_edit_cmd)
 command! Lf LfCurrentFile
