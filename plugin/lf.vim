@@ -65,20 +65,12 @@ function! OpenLfIn(path, edit_cmd)
         endtry
       endfunction
       enew
-      if isdirectory(currentPath)
-        call termopen(s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"', lfCallback)
-      else
-        call termopen(s:lf_command . " " . currentPath, lfCallback)
-      endif
+      call termopen(s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"', lfCallback)
       startinsert
     else
       set guioptions+=! " Make it work with MacVim
       let currentPath = expand(a:path)
-      if isdirectory(currentPath)
-        silent exec '!' . s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"'
-      else
-        silent exec '!' . s:lf_command . " " . currentPath
-      endif
+      silent exec '!' . s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"'
       if filereadable(s:choice_file_path)
         for f in readfile(s:choice_file_path)
           exec a:edit_cmd . f
