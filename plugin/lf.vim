@@ -46,6 +46,7 @@ endif
 
 function! OpenLfIn(path, edit_cmd)
   let oldguioptions = &guioptions
+  let s:oldlaststatus = &laststatus
   try
     if has('nvim')
       set laststatus=0
@@ -63,6 +64,7 @@ function! OpenLfIn(path, edit_cmd)
             call delete(s:choice_file_path)
           endif
         endtry
+        let &laststatus=s:oldlaststatus
       endfunction
       enew
       call termopen(s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"', lfCallback)
