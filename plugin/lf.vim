@@ -106,8 +106,11 @@ command! Lf LfCurrentFile
 
 " To open the selected file in a new tab
 command! LfCurrentFileNewTab call OpenLfIn("%", 'tabedit ')
+command! LfCurrentFileExistingOrNewTab call OpenLfIn("%", 'tab drop ')
 command! LfCurrentDirectoryNewTab call OpenLfIn("%:p:h", 'tabedit ')
+command! LfCurrentDirectoryExistingOrNewTab call OpenLfIn("%:p:h", 'tab drop ')
 command! LfWorkingDirectoryNewTab call OpenLfIn(".", 'tabedit ')
+command! LfWorkingDirectoryExistingOrNewTab call OpenLfIn(".", 'tab drop ')
 command! LfNewTab LfCurrentDirectoryNewTab
 
 " For retro-compatibility

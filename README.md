@@ -37,10 +37,16 @@ LfCurrentFile // Default Lf behaviour
 LfCurrentDirectory
 LfWorkingDirectory
 
+// open always in new tabs
 LfNewTab
 LfCurrentFileNewTab
 LfCurrentDirectoryNewTab
 LfWorkingDirectoryNewTab
+
+// open tab, when existant or in new tab when not existant
+LfCurrentFileExistingOrNewTab
+LfCurrentDirectoryExistingOrNewTab
+LfWorkingDirectoryExistingOrNewTab
 ```
 
 The old way to make vim open the selected file in a new tab was to add
