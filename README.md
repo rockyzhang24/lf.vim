@@ -1,5 +1,5 @@
 Lf.vim
-==========
+======
 
 [Lf](https://github.com/gokcehan/lf) integration in vim and neovim
 
@@ -17,10 +17,9 @@ If you use neovim, you have to add the dependency to the plugin bclose.vim:
 How to use it
 -------------
 
-The default shortcut for opening Lf is `<leader>f` (\f by default)
-To disable the default key mapping, add this line in your .vimrc or init.vim: `let g:lf_map_keys = 0`
-
-then you can add a new mapping with this line: `map <leader>f :Lf<CR>`.
+The default shortcut for opening Lf is `<leader>f` (\f by default).
+To disable the default key mapping, add this line in your .vimrc or init.vim: `let g:lf_map_keys = 0`.
+Then you can add a new mapping with this line: `map <leader>f :Lf<CR>`.
 
 The command for opening Lf in the current file's directory is `:Lf`.
 Vim will open the selected file in the current window. To open the selected
