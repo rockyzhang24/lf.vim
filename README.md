@@ -22,8 +22,12 @@ To disable the default key mapping, add this line in your .vimrc or init.vim: `l
 Then you can add a new mapping with this line: `map <leader>f :Lf<CR>`.
 
 The command for opening Lf in the current file's directory is `:Lf`.
+When opening (default 'l' and '<right>') a file from the lf window,
 Vim will open the selected file in the current window. To open the selected
 file in a new tab instead use `:LfNewTab`.
+
+(Note that the the lf `open` command is required to return to the originating vim session.
+E.g. the `edit` command opens a new process of $EDITOR.)
 
 For opening Lf in the current workspace, run `:LfWorkingDirectory`.
 Vim will open the selected file in the current window.
