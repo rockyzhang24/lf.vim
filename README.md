@@ -1,7 +1,7 @@
-Lf.vim
+lf.vim
 ======
 
-[Lf](https://github.com/gokcehan/lf) integration in vim and neovim
+[lf](https://github.com/gokcehan/lf) integration in vim and neovim
 
 Installation
 ------------
@@ -17,19 +17,19 @@ If you use neovim, you have to add the dependency to the plugin bclose.vim:
 How to use it
 -------------
 
-The default shortcut for opening Lf is `<leader>f` (\f by default).
+The default shortcut for opening lf is `<leader>f` (\f by default).
 To disable the default key mapping, add this line in your .vimrc or init.vim: `let g:lf_map_keys = 0`.
 Then you can add a new mapping with this line: `map <leader>f :Lf<CR>`.
 
-The command for opening Lf in the current file's directory is `:Lf`.
+The command for opening lf in the current file's directory is `:Lf`.
 When opening (default 'l' and '<right>') a file from the lf window,
-Vim will open the selected file in the current window. To open the selected
+vim will open the selected file in the current window. To open the selected
 file in a new tab instead use `:LfNewTab`.
 
-(Note that the the lf `open` command is required to return to the originating vim session.
+(Note that the lf `open` command is required to return to the originating vim session.
 E.g. the `edit` command opens a new process of $EDITOR.)
 
-For opening Lf in the current workspace, run `:LfWorkingDirectory`.
+For opening lf in the current workspace, run `:LfWorkingDirectory`.
 Vim will open the selected file in the current window.
 `:LfWorkingDirectoryNewTab` will open the selected file in a new tab instead.
 
@@ -66,7 +66,7 @@ let g:lf_replace_netrw = 1 // open lf when vim open a directory
 In order for this to work you need to install the bclose.vim plugin (see above).
 
 ### Setting an other path for the temporary file
-Lf.vim uses a temporary file to store the path that was chosen, `/tmp/chosenfile` by default.
+lf.vim uses a temporary file to store the path that was chosen, `/tmp/chosenfile` by default.
 This can be a problem if you do not have write permissions for the `/tmp` directory, for example on Android.
 There is a configuration variable for this called `g:lf_choice_file`, this must be set to the
 path for a file that doesn't yet exist (this file is created when choosing a file and removed afterwards).
