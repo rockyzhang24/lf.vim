@@ -23,25 +23,12 @@
 
 
 " ================ Lf =======================
-if exists('g:lf_choice_file')
-  if empty(glob(g:lf_choice_file))
-    let s:choice_file_path = g:lf_choice_file
-  else
-    echom "Message from *Lf.vim* :"
-    echom "You've set the g:lf_choice_file variable."
-    echom "Please use the path for a file that does not already exist."
-    echom "Using /tmp/chosenfile for now..."
-  endif
-endif
+let s:choice_file_path = tempname()
 
 if exists('g:lf_command_override')
   let s:lf_command = g:lf_command_override
 else
   let s:lf_command = 'lf'
-endif
-
-if !exists('s:choice_file_path')
-  let s:choice_file_path = '/tmp/chosenfile'
 endif
 
 function! OpenLfIn(path, edit_cmd)

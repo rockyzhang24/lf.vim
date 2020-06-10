@@ -65,12 +65,6 @@ let g:lf_replace_netrw = 1 // open lf when vim open a directory
 
 In order for this to work you need to install the bclose.vim plugin (see above).
 
-### Setting an other path for the temporary file
-lf.vim uses a temporary file to store the path that was chosen, `/tmp/chosenfile` by default.
-This can be a problem if you do not have write permissions for the `/tmp` directory, for example on Android.
-There is a configuration variable for this called `g:lf_choice_file`, this must be set to the
-path for a file that doesn't yet exist (this file is created when choosing a file and removed afterwards).
-
 ### Setting a custom lf command
 By default lf is opened with the command `lf` but you can set an other custom command by setting the `g:lf_command_override` variable in your .(n)vimrc.
 
