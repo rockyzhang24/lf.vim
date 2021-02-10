@@ -10,9 +10,9 @@ Install it with your favorite plugin manager. Example with vim-plug:
 
         Plug 'ptzz/lf.vim'
 
-If you use neovim, you have to add the dependency to the plugin bclose.vim:
+If you use neovim, you have to add the dependency to the plugin vim-bbye:
 
-        Plug 'rbgrouleff/bclose.vim'
+        Plug 'moll/vim-bbye'
 
 How to use it
 -------------
@@ -63,7 +63,7 @@ let g:NERDTreeHijackNetrw = 0 // add this line if you use NERDTree
 let g:lf_replace_netrw = 1 // open lf when vim open a directory
 ```
 
-In order for this to work you need to install the bclose.vim plugin (see above).
+In order for this to work you need to install the vim-bbye plugin (see above).
 
 ### Setting a custom lf command
 By default lf is opened with the command `lf` but you can set an other custom command by setting the `g:lf_command_override` variable in your .(n)vimrc.
