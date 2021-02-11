@@ -23,8 +23,6 @@
 
 
 " ================ Lf =======================
-let s:choice_file_path = tempname()
-
 if exists('g:lf_command_override')
   let s:lf_command = g:lf_command_override
 else
@@ -32,77 +30,70 @@ else
 endif
 
 function! OpenLfIn(path, edit_cmd)
-  let oldguioptions = &guioptions
-  let s:oldlaststatus = &laststatus
-  let s:oldshowmode = &showmode
-  let s:oldrelativenumber = &relativenumber
-  try
-    if has('nvim')
-      set laststatus=0
-      set noshowmode norelativenumber
-      let currentPath = expand(a:path)
-      let lfCallback = { 'name': 'lf', 'edit_cmd': a:edit_cmd }
-      function! lfCallback.on_exit(job_id, code, event)
-        if a:code == 0
-          if exists(":Bdelete")
-            silent! Bdelete!
-          else
-            echoerr "Failed to close buffer, make sure the `moll/vim-bbye` plugin is installed"
-          endif
-        endif
-        try
-          if filereadable(s:choice_file_path)
-            for f in readfile(s:choice_file_path)
-              exec self.edit_cmd . f
-            endfor
-            call delete(s:choice_file_path)
-          endif
-        endtry
-        let &laststatus=s:oldlaststatus
-        let &showmode=s:oldshowmode
-        let &relativenumber=s:oldrelativenumber
-      endfunction
-      enew
-      call termopen(s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"', lfCallback)
-      startinsert
-    else
-      set guioptions+=! " Make it work with MacVim
-      let currentPath = expand(a:path) != "" ? expand(a:path) : getcwd()
-      silent exec '!' . s:lf_command . ' -selection-path=' . s:choice_file_path . ' "' . currentPath . '"'
-      if filereadable(s:choice_file_path)
-        for f in readfile(s:choice_file_path)
-          exec a:edit_cmd . f
-        endfor
-        call delete(s:choice_file_path)
-      endif
-      redraw!
-      " reset the filetype to fix the issue that happens
-      " when opening lf on VimEnter (with `vim .`)
-      filetype detect
-    endif
-  endtry
-  let &guioptions=oldguioptions
+  let currentPath = expand(a:path)
+  let s:edit_cmd = a:edit_cmd
+  if exists(":FloatermNew")
+    exec 'FloatermNew ' . '--height=' . string(get(g:, 'lf_height', g:floaterm_height)) . ' --width=' . string(get(g:, 'lf_width', g:floaterm_width)) . ' ' . s:lf_command . ' ' . currentPath
+  else
+    echoerr "Failed to open a floating terminal. Make sure `voldikss/vim-floaterm` is installed."
+  endif
 endfun
+
+function! LfCallback(lf_tmpfile, lastdir_tmpfile, ...) abort
+  let edit_cmd = get(s:, 'edit_cmd', 'default')
+  if (edit_cmd == 'cd' || edit_cmd == 'lcd') && filereadable(a:lastdir_tmpfile)
+    let lastdir = readfile(a:lastdir_tmpfile, '', 1)[0]
+    if lastdir != getcwd()
+      exec edit_cmd . ' ' . lastdir
+      return
+    endif
+  elseif filereadable(a:lf_tmpfile)
+    let filenames = readfile(a:lf_tmpfile)
+    if !empty(filenames)
+      if has('nvim')
+        call floaterm#window#hide(bufnr('%'))
+      endif
+      let locations = []
+      if edit_cmd != 'default'
+        for filename in filenames
+          let dict = {'filename': fnamemodify(filename, ':p')}
+
+          call add(locations, dict)
+        endfor
+        unlet s:edit_cmd
+      else
+        for filename in filenames
+          let dict = {'filename': fnamemodify(filename, ':p')}
+
+          call add(locations, dict)
+        endfor
+      endif
+      call floaterm#util#open(g:floaterm_open_command, locations)
+    endif
+  endif
+endfunction
 
 " For backwards-compatibility (deprecated)
 if exists('g:lf_open_new_tab') && g:lf_open_new_tab
-  let s:default_edit_cmd='tabedit '
+  let s:default_edit_cmd='tabedit'
 else
-  let s:default_edit_cmd='edit '
+  let s:default_edit_cmd='edit'
 endif
 
+command! Lfcd call OpenLfIn(".", 'cd')
+command! Lflcd call OpenLfIn(".", 'lcd')
 command! LfCurrentFile call OpenLfIn("%", s:default_edit_cmd)
 command! LfCurrentDirectory call OpenLfIn("%:p:h", s:default_edit_cmd)
 command! LfWorkingDirectory call OpenLfIn(".", s:default_edit_cmd)
 command! Lf LfCurrentFile
 
 " To open the selected file in a new tab
-command! LfCurrentFileNewTab call OpenLfIn("%", 'tabedit ')
-command! LfCurrentFileExistingOrNewTab call OpenLfIn("%", 'tab drop ')
-command! LfCurrentDirectoryNewTab call OpenLfIn("%:p:h", 'tabedit ')
-command! LfCurrentDirectoryExistingOrNewTab call OpenLfIn("%:p:h", 'tab drop ')
-command! LfWorkingDirectoryNewTab call OpenLfIn(".", 'tabedit ')
-command! LfWorkingDirectoryExistingOrNewTab call OpenLfIn(".", 'tab drop ')
+command! LfCurrentFileNewTab call OpenLfIn("%", 'tabedit')
+command! LfCurrentFileExistingOrNewTab call OpenLfIn("%", 'tab drop')
+command! LfCurrentDirectoryNewTab call OpenLfIn("%:p:h", 'tabedit')
+command! LfCurrentDirectoryExistingOrNewTab call OpenLfIn("%:p:h", 'tab drop')
+command! LfWorkingDirectoryNewTab call OpenLfIn(".", 'tabedit')
+command! LfWorkingDirectoryExistingOrNewTab call OpenLfIn(".", 'tab drop')
 command! LfNewTab LfCurrentDirectoryNewTab
 
 " For retro-compatibility
@@ -110,26 +101,14 @@ function! OpenLf()
   Lf
 endfunction
 
-" Open Lf in the directory passed by argument
-function! OpenLfOnVimLoadDir(argv_path)
-  let path = expand(a:argv_path)
-
-  " Delete empty buffer created by vim
-  Bdelete!
-
-  " Open Lf
-  call OpenLfIn(path, s:default_edit_cmd)
-endfunction
-
 " To open lf when vim load a directory
 if exists('g:lf_replace_netrw') && g:lf_replace_netrw
   augroup ReplaceNetrwByLfVim
     autocmd VimEnter * silent! autocmd! FileExplorer
-    autocmd BufEnter * if isdirectory(expand("%")) | call OpenLfOnVimLoadDir("%") | endif
+    autocmd BufEnter * let s:buf_path = expand("%") | if isdirectory(s:buf_path) | bdelete! | call OpenLfIn(s:buf_path, s:default_edit_cmd) | endif
   augroup END
 endif
 
 if !exists('g:lf_map_keys') || g:lf_map_keys
   map <leader>f :Lf<CR>
 endif
-
