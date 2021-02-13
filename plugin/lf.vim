@@ -54,22 +54,13 @@ function! LfCallback(lf_tmpfile, lastdir_tmpfile, ...) abort
         call floaterm#window#hide(bufnr('%'))
       endif
       let locations = []
-      if edit_cmd != 'default'
-        for filename in filenames
-          let dict = {'filename': fnamemodify(filename, ':p')}
-
-          call add(locations, dict)
-        endfor
-        call floaterm#util#open(s:edit_cmd, locations)
-        unlet s:edit_cmd
-      else
-        for filename in filenames
-          let dict = {'filename': fnamemodify(filename, ':p')}
-
-          call add(locations, dict)
-        endfor
-        call floaterm#util#open(g:floaterm_open_command, locations)
-      endif
+      let floaterm_opener = edit_cmd != 'default' ? s:edit_cmd : g:floaterm_opener
+      for filename in filenames
+        let dict = {'filename': fnamemodify(filename, ':p')}
+        call add(locations, dict)
+      endfor
+      call floaterm#util#open(locations, floaterm_opener)
+      unlet s:edit_cmd
     endif
   endif
 endfunction
