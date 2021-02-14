@@ -60,7 +60,7 @@ function! LfCallback(lf_tmpfile, lastdir_tmpfile, ...) abort
         call add(locations, dict)
       endfor
       call floaterm#util#open(locations, floaterm_opener)
-      unlet s:edit_cmd
+      unlet! s:edit_cmd
     endif
   endif
 endfunction
