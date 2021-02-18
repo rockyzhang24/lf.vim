@@ -1,4 +1,4 @@
-function! floaterm#wrapper#lf#(cmd) abort
+function! floaterm#wrapper#lf#(cmd, jobopts, ...) abort
   let lf_tmpfile = tempname()
   let lastdir_tmpfile = tempname()
   let original_dir = getcwd()
@@ -14,5 +14,6 @@ function! floaterm#wrapper#lf#(cmd) abort
 
   exe "lcd " . original_dir
   let cmd = [&shell, &shellcmdflag, cmd]
-  return [cmd, {'on_exit': funcref('LfCallback', [lf_tmpfile, lastdir_tmpfile])}, v:false]
+  let a:jobopts.on_exit = funcref('LfCallback', [lf_tmpfile, lastdir_tmpfile])
+  return [v:false, cmd]
 endfunction
