@@ -62,6 +62,12 @@ function! LfCallback(lf_tmpfile, lastdir_tmpfile, ...) abort
       call floaterm#util#open(locations, floaterm_opener)
       unlet! s:edit_cmd
     endif
+  else
+    let lf_exit_code = a:2
+    if lf_exit_code != 0
+      echoerr 'lf returned non-zero exit code ' . lf_exit_code
+      return
+    endif
   endif
 endfunction
 
