@@ -5,7 +5,14 @@ function! floaterm#wrapper#lf#(cmd, jobopts, ...) abort
   lcd %:p:h
 
   let cmdlist = split(a:cmd)
-  let cmd = 'lf -last-dir-path="' . lastdir_tmpfile . '" -selection-path="' . lf_tmpfile . '"'
+
+  if exists('g:lf_command_override')
+    let s:lf_command = g:lf_command_override
+  else
+    let s:lf_command = 'lf'
+  endif
+
+  let cmd = s:lf_command . ' ' . '-last-dir-path="' . lastdir_tmpfile . '" -selection-path="' . lf_tmpfile . '"'
   if len(cmdlist) > 1
     let cmd .= ' ' . join(cmdlist[1:], ' ')
   else
