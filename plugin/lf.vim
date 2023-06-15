@@ -27,7 +27,12 @@ function! OpenLfIn(path, edit_cmd)
   let currentPath = shellescape(isdirectory(a:path) ? fnamemodify(expand(a:path), ":p:h") : expand(a:path))
   let s:edit_cmd = a:edit_cmd
   if exists(":FloatermNew")
-    exec 'FloatermNew' . ' --height=' . string(get(g:, 'lf_height', g:floaterm_height)) . ' --width=' . string(get(g:, 'lf_width', g:floaterm_width)) . ' lf -- ' . currentPath
+    exec 'FloatermNew'
+          \ . ' --height=' . string(get(g:, 'lf_height', g:floaterm_height))
+          \ . ' --width=' . string(get(g:, 'lf_width', g:floaterm_width))
+          \ . ' --title=\ Explorer\ '
+          \ . ' --titleposition=center'
+          \ . ' lf -- ' . currentPath
   else
     echoerr "Failed to open a floating terminal. Make sure `voldikss/vim-floaterm` is installed."
   endif
