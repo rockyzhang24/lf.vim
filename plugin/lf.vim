@@ -30,8 +30,8 @@ function! OpenLfIn(path, edit_cmd)
     exec 'FloatermNew'
           \ . ' --height=' . string(get(g:, 'lf_height', g:floaterm_height))
           \ . ' --width=' . string(get(g:, 'lf_width', g:floaterm_width))
-          \ . ' --title=\ Explorer\ '
-          \ . ' --titleposition=center'
+          \ . ' --title=' . escape(get(g:, 'lf_title', g:floaterm_title), ' ')
+          \ . ' --titleposition=' . get(g:, 'lf_titleposition', g:floaterm_titleposition)
           \ . ' lf -- ' . currentPath
   else
     echoerr "Failed to open a floating terminal. Make sure `voldikss/vim-floaterm` is installed."
